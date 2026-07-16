@@ -1,8 +1,13 @@
 [build]
-  command = "npm run build"
+  command = "chmod +x ./node_modules/.bin/* 2>/dev/null || true; npm run build"
   publish = "dist"
+
+[build.environment]
+  NODE_ENV = "development"
+  NPM_FLAGS = "--include=dev"
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
