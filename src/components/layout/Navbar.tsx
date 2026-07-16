@@ -49,30 +49,30 @@ export default function Navbar() {
         className={cn(
           'fixed top-0 left-0 right-0 z-[1000] transition-all duration-500',
           scrolled
-            ? 'glass py-3 shadow-[0_4px_30px_rgba(255,26,26,0.05)]'
-            : 'bg-transparent py-5'
+            ? 'glass py-3.5 shadow-[0_4px_30px_rgba(255,26,26,0.08)]'
+            : 'bg-transparent py-5 md:py-6'
         )}
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, delay: 3.5, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          {/* Logo */}
+        <div className="w-full max-w-[1400px] mx-auto px-10 md:px-16 lg:px-24 flex items-center justify-between">
+          {/* Logo with generous left padding & spacing */}
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="font-pixel text-lg text-[var(--color-primary)] tracking-wider hover:text-glow transition-all"
+            className="font-pixel text-lg md:text-xl text-[var(--color-primary)] tracking-widest hover:text-glow transition-all cursor-pointer pl-4 md:pl-8 lg:pl-10"
           >
             HENS
           </button>
 
           {/* Desktop Nav Links */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-8 lg:gap-10 pr-4 md:pr-8 lg:pr-10">
             {NAV_LINKS.map((link) => (
               <button
                 key={link.href}
                 onClick={() => handleNavClick(link.href)}
                 className={cn(
-                  'font-mono text-sm uppercase tracking-wider transition-all duration-300 relative',
+                  'font-mono text-xs lg:text-sm uppercase tracking-wider transition-all duration-300 relative cursor-pointer',
                   activeSection === link.href
                     ? 'text-[var(--color-primary)] text-glow'
                     : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)]'
@@ -96,7 +96,7 @@ export default function Navbar() {
                          text-[var(--color-primary)] border border-[var(--color-primary)]
                          transition-all duration-300 hover:bg-[var(--color-primary)]
                          hover:text-[var(--color-bg)] hover:shadow-[var(--shadow-red)]
-                         animate-[borderGlow_3s_ease-in-out_infinite]"
+                         animate-[borderGlow_3s_ease-in-out_infinite] cursor-pointer"
             >
               Book a Call
             </button>
@@ -104,7 +104,7 @@ export default function Navbar() {
 
           {/* Mobile Hamburger */}
           <button
-            className="md:hidden text-[var(--color-primary)] text-2xl"
+            className="md:hidden text-[var(--color-primary)] text-2xl pr-4"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
@@ -129,7 +129,7 @@ export default function Navbar() {
                 key={link.href}
                 onClick={() => handleNavClick(link.href)}
                 className={cn(
-                  'font-mono text-xl uppercase tracking-widest transition-colors',
+                  'font-mono text-xl uppercase tracking-widest transition-colors cursor-pointer',
                   activeSection === link.href
                     ? 'text-[var(--color-primary)]'
                     : 'text-[var(--color-text-dim)]'
@@ -145,7 +145,7 @@ export default function Navbar() {
             <motion.button
               onClick={() => handleNavClick('#contact')}
               className="mt-4 px-8 py-3 border border-[var(--color-primary)] text-[var(--color-primary)]
-                         font-mono text-sm uppercase tracking-wider"
+                         font-mono text-sm uppercase tracking-wider cursor-pointer"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}

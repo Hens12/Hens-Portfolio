@@ -78,6 +78,12 @@ export interface UpcomingProject {
 
 export const upcomingProjects: UpcomingProject[] = [
   {
+    name: 'lensfusion production',
+    status: 'coming-soon',
+    progress: 5,
+    description: 'lensfusion website production contact:- +91 9327348770, +91 95745 80058 ',
+  },
+  {
     name: 'Neural Code Editor',
     status: 'compiling',
     progress: 65,
