@@ -79,8 +79,8 @@ export interface UpcomingProject {
 export const upcomingProjects: UpcomingProject[] = [
   {
     name: 'lensfusion production',
-    status: 'coming-soon',
-    progress: 10,
+    status: 'loading',
+    progress: 25,
     description: 'lensfusion website production contact:- +91 9327348770, +91 95745 80058 ',
   },
   {
