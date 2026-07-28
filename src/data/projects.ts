@@ -80,7 +80,7 @@ export const upcomingProjects: UpcomingProject[] = [
   {
     name: 'lensfusion production',
     status: 'loading',
-    progress: 25,
+    progress: 82,
     description: 'lensfusion website production contact:- +91 9327348770, +91 95745 80058 ',
   },
   {
