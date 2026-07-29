@@ -79,8 +79,8 @@ export interface UpcomingProject {
 export const upcomingProjects: UpcomingProject[] = [
   {
     name: 'Picasso,s Studio',
-    status: 'deploying',
-    progress: 82,
+    status: 'compiling',
+    progress: 87,
     description: 'Picasso,s Studio contact:- +91 9327348770',
   },
   {
