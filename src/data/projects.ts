@@ -32,7 +32,7 @@ export const projects: Project[] = [
     description:
       'Real-time threat monitoring dashboard with network packet analysis, vulnerability scanning, and incident response automation. Features live threat map visualization.',
     techStack: ['Next.js', 'TypeScript', 'Three.js', 'WebSocket', 'Go', 'Kubernetes'],
-    github: 'https://github.com/hens/cyber-dashboard',
+    github: 'https://github.com/Hens12/Cyber-Security-Dashboard.git',
     liveDemo: 'https://cyber.hens.dev',
     status: 'deployed',
   },
