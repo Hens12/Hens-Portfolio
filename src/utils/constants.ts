@@ -14,7 +14,7 @@ export const SITE = {
   phoneRaw: '7863056702',
   location: 'Bangalore, India',
   resume: '/resume.pdf',
-  calendly: '#',
+  calendly: '#contact',
 } as const;
 
 export const NAV_LINKS = [

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { NAV_LINKS } from '../../utils/constants';
+import { NAV_LINKS, SITE } from '../../utils/constants';
 import { cn } from '../../utils/cn';
 import { HiMenuAlt3, HiX } from 'react-icons/hi';
 
@@ -41,6 +41,15 @@ export default function Navbar() {
     setMobileOpen(false);
     const el = document.querySelector(href);
     el?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleBookCall = () => {
+    setMobileOpen(false);
+    if (SITE.calendly && SITE.calendly.startsWith('http')) {
+      window.open(SITE.calendly, '_blank', 'noopener,noreferrer');
+    } else {
+      handleNavClick('#contact');
+    }
   };
 
   return (
@@ -91,7 +100,7 @@ export default function Navbar() {
 
             {/* Book a Call CTA */}
             <button
-              onClick={() => handleNavClick('#contact')}
+              onClick={handleBookCall}
               className="relative px-5 py-2 rounded-sm font-mono text-xs uppercase tracking-wider
                          text-[var(--color-primary)] border border-[var(--color-primary)]
                          transition-all duration-300 hover:bg-[var(--color-primary)]
@@ -143,7 +152,7 @@ export default function Navbar() {
             ))}
 
             <motion.button
-              onClick={() => handleNavClick('#contact')}
+              onClick={handleBookCall}
               className="mt-4 px-8 py-3 border border-[var(--color-primary)] text-[var(--color-primary)]
                          font-mono text-sm uppercase tracking-wider cursor-pointer"
               initial={{ opacity: 0, y: 20 }}
