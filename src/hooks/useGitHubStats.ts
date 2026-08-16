@@ -194,6 +194,10 @@ export function useGitHubStats(username: string): GitHubStats {
     };
 
     fetchStats();
+
+    // Auto-poll every 30 seconds for live real-time sync
+    const interval = setInterval(fetchStats, 30000);
+    return () => clearInterval(interval);
   }, [username, refreshKey]);
 
   return { ...stats, refetch };
