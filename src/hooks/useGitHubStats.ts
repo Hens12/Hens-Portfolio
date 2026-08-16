@@ -16,7 +16,6 @@ export interface GitHubStats {
   totalContributions: number;
   loading: boolean;
   error: string | null;
-  refetch?: () => void;
 }
 
 function processFlatDaysToWeeks(days: { date: string; count: number; level?: number }[]): {
@@ -70,13 +69,6 @@ export function useGitHubStats(username: string): GitHubStats {
     loading: true,
     error: null,
   });
-
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  const refetch = () => {
-    setStats((prev) => ({ ...prev, loading: true }));
-    setRefreshKey((k) => k + 1);
-  };
 
   useEffect(() => {
     if (!username) {
@@ -195,10 +187,10 @@ export function useGitHubStats(username: string): GitHubStats {
 
     fetchStats();
 
-    // Auto-poll every 30 seconds for live real-time sync
+    // Auto-poll every 30 seconds for real-time live sync
     const interval = setInterval(fetchStats, 30000);
     return () => clearInterval(interval);
-  }, [username, refreshKey]);
+  }, [username]);
 
-  return { ...stats, refetch };
+  return stats;
 }
