@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FiGitBranch, FiStar, FiUsers, FiCode } from 'react-icons/fi';
+import { FiGitBranch, FiStar, FiUsers, FiCode, FiRefreshCw } from 'react-icons/fi';
 import { useGitHubStats } from '../hooks/useGitHubStats';
 import { SITE } from '../utils/constants';
 import AnimatedCounter from '../components/ui/AnimatedCounter';
@@ -17,14 +17,33 @@ export default function GitHub() {
   ];
 
   const levelColors = [
-    'rgba(255, 26, 26, 0.05)',  // Level 0: None
-    'rgba(255, 26, 26, 0.25)',  // Level 1: Low
-    'rgba(255, 26, 26, 0.50)',  // Level 2: Medium
-    'rgba(255, 26, 26, 0.75)',  // Level 3: High
+    'rgba(255, 26, 26, 0.08)',  // Level 0: None
+    'rgba(255, 26, 26, 0.35)',  // Level 1: Low
+    'rgba(255, 26, 26, 0.60)',  // Level 2: Medium
+    'rgba(255, 26, 26, 0.85)',  // Level 3: High
     'rgba(255, 26, 26, 1.0)',   // Level 4: Max
   ];
 
   const hasRealContributions = stats.contributions.length > 0;
+
+  // Calculate Month headers for the heatmap
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const monthHeaders: { label: string; weekIdx: number }[] = [];
+  let lastMonth = -1;
+
+  if (hasRealContributions) {
+    stats.contributions.forEach((week, wIdx) => {
+      const firstDay = week[0];
+      if (firstDay && firstDay.date) {
+        const dateObj = new Date(firstDay.date);
+        const m = dateObj.getMonth();
+        if (m !== lastMonth) {
+          monthHeaders.push({ label: monthNames[m], weekIdx: wIdx });
+          lastMonth = m;
+        }
+      }
+    });
+  }
 
   return (
     <section id="github" className="section-container relative">
@@ -86,69 +105,109 @@ export default function GitHub() {
               </h3>
               <p className="font-mono text-xs text-[var(--color-text-muted)] mt-1">
                 {stats.loading
-                  ? 'Syncing with GitHub...'
+                  ? 'Syncing live data from GitHub...'
                   : `${stats.totalContributions} contributions in the last year for @${SITE.github}`}
               </p>
             </div>
-            <a
-              href={`https://github.com/${SITE.github}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-mono text-xs text-[var(--color-primary)] hover:text-white px-3 py-1.5 border border-[var(--color-border-red)] rounded hover:border-[var(--color-primary)] transition-all bg-[rgba(255,26,26,0.08)]"
-            >
-              @ {SITE.github} ↗
-            </a>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => stats.refetch?.()}
+                disabled={stats.loading}
+                title="Force refresh live stats"
+                className="font-mono text-xs text-[var(--color-text-muted)] hover:text-white p-2 border border-[var(--color-border-red)]/50 rounded hover:border-[var(--color-primary)] transition-all bg-[rgba(255,26,26,0.05)] disabled:opacity-50"
+              >
+                <FiRefreshCw className={stats.loading ? 'animate-spin' : ''} />
+              </button>
+              <a
+                href={`https://github.com/${SITE.github}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-xs text-[var(--color-primary)] hover:text-white px-3 py-1.5 border border-[var(--color-border-red)] rounded hover:border-[var(--color-primary)] transition-all bg-[rgba(255,26,26,0.08)]"
+              >
+                @ {SITE.github} ↗
+              </a>
+            </div>
           </div>
 
           {/* Heatmap grid */}
           <div className="overflow-x-auto pb-2">
-            <div className="flex gap-[3.5px] min-w-[720px] justify-between">
-              {hasRealContributions
-                ? stats.contributions.map((week, weekIdx) => (
-                    <div key={weekIdx} className="flex flex-col gap-[3.5px]">
-                      {week.map((day, dayIdx) => (
-                        <motion.div
-                          key={day.date || dayIdx}
-                          className="w-[11px] h-[11px] rounded-[2px] cursor-pointer"
-                          style={{ backgroundColor: levelColors[day.level] || levelColors[0] }}
-                          initial={{ opacity: 0, scale: 0 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          viewport={{ once: true }}
-                          transition={{
-                            delay: (weekIdx * 7 + dayIdx) * 0.001,
-                            duration: 0.15,
-                          }}
-                          whileHover={{
-                            scale: 1.6,
-                            boxShadow: '0 0 10px rgba(255, 26, 26, 0.8)',
-                          }}
-                          title={`${day.date}: ${day.count} contribution${day.count === 1 ? '' : 's'}`}
-                        />
+            <div className="min-w-[720px]">
+              {/* Month headers */}
+              {hasRealContributions && monthHeaders.length > 0 && (
+                <div className="flex text-[10px] font-mono text-[var(--color-text-muted)] mb-2 pl-6">
+                  {stats.contributions.map((_, wIdx) => {
+                    const monthObj = monthHeaders.find((m) => m.weekIdx === wIdx);
+                    return (
+                      <div key={wIdx} className="w-[14.5px] text-left shrink-0">
+                        {monthObj ? monthObj.label : ''}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              <div className="flex gap-[3.5px]">
+                {/* Day labels (Mon, Wed, Fri) */}
+                <div className="flex flex-col justify-between text-[9px] font-mono text-[var(--color-text-muted)] pr-1 py-[1px] select-none">
+                  <span>Sun</span>
+                  <span>Mon</span>
+                  <span>Tue</span>
+                  <span>Wed</span>
+                  <span>Thu</span>
+                  <span>Fri</span>
+                  <span>Sat</span>
+                </div>
+
+                {/* Heatmap columns */}
+                <div className="flex gap-[3.5px] flex-1 justify-between">
+                  {hasRealContributions
+                    ? stats.contributions.map((week, weekIdx) => (
+                        <div key={weekIdx} className="flex flex-col gap-[3.5px]">
+                          {week.map((day, dayIdx) => (
+                            <motion.div
+                              key={day.date || dayIdx}
+                              className="w-[11px] h-[11px] rounded-[2px] cursor-pointer relative group"
+                              style={{ backgroundColor: levelColors[day.level] || levelColors[0] }}
+                              initial={{ opacity: 0, scale: 0 }}
+                              whileInView={{ opacity: 1, scale: 1 }}
+                              viewport={{ once: true }}
+                              transition={{
+                                delay: (weekIdx * 7 + dayIdx) * 0.0008,
+                                duration: 0.12,
+                              }}
+                              whileHover={{
+                                scale: 1.6,
+                                boxShadow: '0 0 10px rgba(255, 26, 26, 0.8)',
+                              }}
+                              title={`${day.date ? day.date : 'Day'}: ${day.count} contribution${day.count === 1 ? '' : 's'}`}
+                            />
+                          ))}
+                        </div>
+                      ))
+                    : Array.from({ length: 52 }, (_, weekIdx) => (
+                        <div key={weekIdx} className="flex flex-col gap-[3.5px]">
+                          {Array.from({ length: 7 }, (_, dayIdx) => {
+                            const isEven = (weekIdx + dayIdx) % 3 === 0;
+                            const level = isEven ? 1 : 0;
+                            return (
+                              <div
+                                key={dayIdx}
+                                className="w-[11px] h-[11px] rounded-[2px]"
+                                style={{ backgroundColor: levelColors[level] }}
+                              />
+                            );
+                          })}
+                        </div>
                       ))}
-                    </div>
-                  ))
-                : Array.from({ length: 52 }, (_, weekIdx) => (
-                    <div key={weekIdx} className="flex flex-col gap-[3.5px]">
-                      {Array.from({ length: 7 }, (_, dayIdx) => {
-                        const isEven = (weekIdx + dayIdx) % 3 === 0;
-                        const level = isEven ? 1 : 0;
-                        return (
-                          <div
-                            key={dayIdx}
-                            className="w-[11px] h-[11px] rounded-[2px]"
-                            style={{ backgroundColor: levelColors[level] }}
-                          />
-                        );
-                      })}
-                    </div>
-                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Legend */}
           <div className="flex items-center justify-between border-t border-[var(--color-border-red)]/40 pt-4 mt-4">
             <span className="font-mono text-[10px] text-[var(--color-text-muted)]">
-              {stats.loading ? 'Fetching real graph data...' : 'Live GitHub Graph Sync'}
+              {stats.loading ? 'Fetching live graph data...' : 'Live GitHub Sync Active'}
             </span>
             <div className="flex items-center gap-2">
               <span className="font-mono text-[10px] text-[var(--color-text-muted)]">Less</span>

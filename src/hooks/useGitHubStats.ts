@@ -16,6 +16,7 @@ export interface GitHubStats {
   totalContributions: number;
   loading: boolean;
   error: string | null;
+  refetch?: () => void;
 }
 
 function processFlatDaysToWeeks(days: { date: string; count: number; level?: number }[]): {
@@ -70,6 +71,13 @@ export function useGitHubStats(username: string): GitHubStats {
     error: null,
   });
 
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const refetch = () => {
+    setStats((prev) => ({ ...prev, loading: true }));
+    setRefreshKey((k) => k + 1);
+  };
+
   useEffect(() => {
     if (!username) {
       setStats((prev) => ({ ...prev, loading: false }));
@@ -78,14 +86,15 @@ export function useGitHubStats(username: string): GitHubStats {
 
     const fetchStats = async () => {
       try {
+        const timestamp = Date.now();
         // Fetch GitHub user data, repos, and live contribution graph concurrently
         const [userRes, reposRes, contribRes] = await Promise.allSettled([
-          fetch(`https://api.github.com/users/${username}`),
-          fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=updated`),
-          fetch(`https://github-contributions-api.jogruber.de/v4/${username}?y=last`).then(async (r) => {
+          fetch(`https://api.github.com/users/${username}?_t=${timestamp}`),
+          fetch(`https://api.github.com/users/${username}/repos?per_page=100&sort=updated&_t=${timestamp}`),
+          fetch(`https://github-contributions-api.jogruber.de/v4/${username}?y=last&_t=${timestamp}`).then(async (r) => {
             if (r.ok) return r.json();
             // Fallback to vercel api if jogruber fails
-            const fallback = await fetch(`https://github-contributions.vercel.app/api/v1/${username}`);
+            const fallback = await fetch(`https://github-contributions.vercel.app/api/v1/${username}?_t=${timestamp}`);
             if (fallback.ok) return fallback.json();
             throw new Error('Contribution API failed');
           }),
@@ -185,7 +194,7 @@ export function useGitHubStats(username: string): GitHubStats {
     };
 
     fetchStats();
-  }, [username]);
+  }, [username, refreshKey]);
 
-  return stats;
+  return { ...stats, refetch };
 }
