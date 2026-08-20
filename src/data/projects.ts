@@ -83,6 +83,12 @@ export const upcomingProjects: UpcomingProject[] = [
     progress: 87,
     description: 'Picasso,s Studio contact:- +91 9327348770',
   },
+    {
+    name: 'SIMS-Timetable Management System',
+    status: 'coming-soon',
+    progress: 15,
+    description: 'Build a production-ready Automatic College Timetable Management System',
+  },
   {
     name: 'Neural Code Editor',
     status: 'compiling',
