@@ -86,7 +86,7 @@ export const upcomingProjects: UpcomingProject[] = [
     {
     name: 'SIMS-Timetable Management System',
     status: 'coming-soon',
-    progress: 15,
+    progress: 67,
     description: 'Build a production-ready Automatic College Timetable Management System',
   },
   {
